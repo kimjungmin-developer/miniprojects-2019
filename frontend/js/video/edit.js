@@ -11,7 +11,6 @@ const editVideo = function(json) {
         alert("해당 동영상이 없습니다!");
         return false;
     }
-    addVideoEditTemplate(json);
     insertValuesIntoTemplate(json);
 }
 
