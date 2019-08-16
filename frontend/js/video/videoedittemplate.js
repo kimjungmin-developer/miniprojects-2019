@@ -1,5 +1,3 @@
-addVideoEditTemplate(json);
-
 function addVideoEditTemplate(json) {
     const videoEditTemplate = 
     `
@@ -32,7 +30,7 @@ function addVideoEditTemplate(json) {
                             </div>
                         </div>
                     </div>
-                    <button id="save-btn" class="btn btn-danger">Danger</button>
+                    <button id="save-btn" class="btn btn-danger">저장</button>
                 </div>
     `
     const editArea = document.getElementById('edit-area');
