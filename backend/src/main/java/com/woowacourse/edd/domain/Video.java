@@ -1,13 +1,12 @@
 package com.woowacourse.edd.domain;
 
-import com.woowacourse.edd.exceptions.InvalidContentsException;
-import com.woowacourse.edd.exceptions.InvalidTitleException;
-import com.woowacourse.edd.exceptions.InvalidYoutubeIdException;
+import com.woowacourse.edd.domain.vo.Contents;
+import com.woowacourse.edd.domain.vo.Title;
+import com.woowacourse.edd.domain.vo.YoutubeId;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 public class Video {
@@ -16,48 +15,25 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String youtubeId;
+    @Embedded
+    private YoutubeId youtubeId;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @Embedded
+    private Title title;
 
-    @Lob
-    @Column(nullable = false)
-    private String contents;
+    @Embedded
+    private Contents contents;
 
-    @CreationTimestamp
-    @Column(nullable = false)
+    @CreationTimestamp()
     private LocalDateTime createDate;
 
     private Video() {
     }
 
-    public Video(String youtubeId, String title, String contents) {
-        checkYoutubeId(youtubeId);
-        checkTitle(title);
-        checkContents(contents);
-        this.youtubeId = youtubeId.trim();
-        this.title = title.trim();
-        this.contents = contents.trim();
-    }
-
-    private void checkContents(String contents) {
-        if (Objects.isNull(contents) || contents.trim().isEmpty()) {
-            throw new InvalidContentsException();
-        }
-    }
-
-    private void checkTitle(String title) {
-        if (Objects.isNull(title) || title.trim().isEmpty()) {
-            throw new InvalidTitleException();
-        }
-    }
-
-    private void checkYoutubeId(String youtubeId) {
-        if (Objects.isNull(youtubeId) || youtubeId.trim().isEmpty()) {
-            throw new InvalidYoutubeIdException();
-        }
+    public Video(YoutubeId youtubeId, Title title, Contents contents) {
+        this.youtubeId = youtubeId;
+        this.title = title;
+        this.contents = contents;
     }
 
     public Long getId() {
@@ -65,15 +41,15 @@ public class Video {
     }
 
     public String getYoutubeId() {
-        return youtubeId;
+        return youtubeId.getYoutubeId();
     }
 
     public String getTitle() {
-        return title;
+        return title.getTitle();
     }
 
     public String getContents() {
-        return contents;
+        return contents.getContents();
     }
 
     public LocalDateTime getCreateDate() {
@@ -83,11 +59,11 @@ public class Video {
     @Override
     public String toString() {
         return "Video{" +
-            "id=" + id +
-            ", youtubeId=" + youtubeId +
-            ", title=" + title +
-            ", contents=" + contents +
-            ", createDate=" + createDate +
-            '}';
+                "id=" + id +
+                ", youtubeId=" + youtubeId +
+                ", title=" + title +
+                ", contents=" + contents +
+                ", createDate=" + createDate +
+                '}';
     }
 }
