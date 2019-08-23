@@ -2,16 +2,15 @@ package com.woowacourse.edd.presentation.controller;
 
 import com.woowacourse.edd.application.dto.LoginRequestDto;
 import com.woowacourse.edd.application.dto.UserRequestDto;
-import com.woowacourse.edd.exceptions.UnauthorizedAccessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 
 import static com.woowacourse.edd.exceptions.PasswordNotMatchException.PASSWORD_NOT_MATCH_MESSAGE;
 import static com.woowacourse.edd.exceptions.UnauthenticatedException.UNAUTHENTICATED_MESSAGE;
-import static com.woowacourse.edd.exceptions.UnauthorizedAccessException.UNAUTHORIZED_ACCESS_MESSAGE;
 import static com.woowacourse.edd.exceptions.UserNotFoundException.USER_NOT_FOUND_MESSAGE;
-import static com.woowacourse.edd.presentation.controller.LoginController.*;
+import static com.woowacourse.edd.presentation.controller.LoginController.LOGOUT_URL;
+import static com.woowacourse.edd.presentation.controller.LoginController.LOOKUP_URL;
 
 public class LoginControllerTests extends BasicControllerTests {
 

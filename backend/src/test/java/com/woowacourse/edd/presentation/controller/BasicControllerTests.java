@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.reactive.server.WebTestClientExtensionsKt;
 import reactor.core.publisher.Mono;
 
 import static com.woowacourse.edd.presentation.controller.LoginController.LOGIN_URL;
