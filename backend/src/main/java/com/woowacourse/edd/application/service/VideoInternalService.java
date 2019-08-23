@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 class VideoInternalService {
 
     private final VideoRepository videoRepository;
-    private final VideoConverter videoConverter = new VideoConverter();
 
     @Autowired
     public VideoInternalService(VideoRepository videoRepository) {
