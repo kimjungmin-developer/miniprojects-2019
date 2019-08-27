@@ -35,4 +35,35 @@ public class SubscriptionControllerTests extends BasicControllerTests {
             .expectStatus();
         assertFailUnauthorized(statusAssertions, UNAUTHENTICATED_MESSAGE);
     }
+
+    @Test
+    void find_subscribers() {
+        UserSaveRequestDto subscriber1 = new UserSaveRequestDto("conas", "conas@gmail.com", "p@ssW0rd");
+        UserSaveRequestDto subscriber2 = new UserSaveRequestDto("heebong", "heebong@gmail.com", "p@ssW0rd");
+        UserSaveRequestDto subscribed = new UserSaveRequestDto("jm", "jayem@gmail.com", "p@ssW0rd");
+        signUp(subscriber1);
+        signUp(subscriber2);
+
+        String url=signUp(subscribed).getResponseHeaders().getLocation().toASCIIString();
+
+        LoginRequestDto loginRequestDto=new LoginRequestDto("conas@gmail.com","p@ssW0rd");
+        String sid = getLoginCookie(loginRequestDto);
+
+        webTestClient.post().uri(url + "/subscribe")
+            .cookie(COOKIE_JSESSIONID,sid)
+            .exchange();
+
+        loginRequestDto=new LoginRequestDto("heebong@gmail.com","p@ssW0rd");
+        sid = getLoginCookie(loginRequestDto);
+
+        webTestClient.post().uri(url + "/subscribe")
+            .cookie(COOKIE_JSESSIONID,sid)
+            .exchange();
+
+        webTestClient.get().uri(url +"/count-subscribers")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.numOfSubscribers").isEqualTo(2);
+    }
 }

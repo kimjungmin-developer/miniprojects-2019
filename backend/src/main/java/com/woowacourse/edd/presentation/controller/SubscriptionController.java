@@ -1,10 +1,12 @@
 package com.woowacourse.edd.presentation.controller;
 
 import com.woowacourse.edd.application.response.SessionUser;
+import com.woowacourse.edd.application.response.SubscriptionCountResponse;
 import com.woowacourse.edd.application.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +27,17 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
-    // TODO : 인터셉터 처리
     @PostMapping("/{subscribedId}/subscribe")
     public ResponseEntity subscribe(@PathVariable Long subscribedId, HttpSession session) {
         SessionUser sessionUser = (SessionUser) session.getAttribute("user");
         subscriptionService.subscribe(subscribedId, sessionUser.getId());
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{subscribedId}/count-subscribers")
+    public ResponseEntity countSubscribers(@PathVariable Long subscribedId) {
+        SubscriptionCountResponse subscriptionCountResponse = subscriptionService.countSubscribers(subscribedId);
+        return ResponseEntity.ok(subscriptionCountResponse);
     }
 
 

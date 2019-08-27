@@ -28,4 +28,9 @@ public class SubscriptionInternalService {
         Subscription subscription = new Subscription(subscriber, subscribed);
         return subscriptionRepository.save(subscription);
     }
+
+    public int countSubscribers(Long subscribedId) {
+        User subscribed = userInternalService.findById(subscribedId);
+        return subscriptionRepository.findAllBySubscribed(subscribed).size();
+    }
 }
