@@ -1,6 +1,5 @@
 package com.woowacourse.edd.application.service;
 
-import com.woowacourse.edd.application.response.SubscriptionCountResponse;
 import com.woowacourse.edd.domain.Subscription;
 import com.woowacourse.edd.domain.User;
 import com.woowacourse.edd.exceptions.InvalidSubscriptionException;

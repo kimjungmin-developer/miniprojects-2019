@@ -13,4 +13,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     Optional<Subscription> findBySubscribedAndSubscriber(User subscribed, User subscriber);
 
     List<Subscription> findAllBySubscribed(User subscribed);
+
+    List<Subscription> findAllBySubscriber(User subscriber);
+
+    void deleteAllBySubscribedAndSubscriber(User subscribed, User subscriber);
 }

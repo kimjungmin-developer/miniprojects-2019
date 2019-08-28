@@ -7,6 +7,8 @@ import com.woowacourse.edd.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SubscriptionInternalService {
 
@@ -32,5 +34,21 @@ public class SubscriptionInternalService {
     public int countSubscribers(Long subscribedId) {
         User subscribed = userInternalService.findById(subscribedId);
         return subscriptionRepository.findAllBySubscribed(subscribed).size();
+    }
+
+    public List<Subscription> findSubscriptions(Long id) {
+        User user = userInternalService.findById(id);
+        return subscriptionRepository.findAllBySubscriber(user);
+    }
+
+    public void cancelSubscription(Long subscribedId, Long userId) {
+        if (userId == subscribedId) {
+            throw new InvalidSubscriptionException();
+        }
+
+        User user = userInternalService.findById(userId);
+        User subscribed = userInternalService.findById(subscribedId);
+
+        subscriptionRepository.deleteAllBySubscribedAndSubscriber(subscribed, user);
     }
 }
