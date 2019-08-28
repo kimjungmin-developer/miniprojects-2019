@@ -1,9 +1,33 @@
 const commentApp = (function() {
+    const insertComment = function (data) {
+        const commentSection = document.getElementById('comment-section');
+        const commentTemplate = ` 
+        <li class="comment-item border bottom mrg-btm-30" id="${data.id}">
+            <img class="thumb-img img-circle" src="https://avatars3.githubusercontent.com/u/50367798?v=4" alt="">
+            <div class="info">
+                <span href="" class="text-bold inline-block">${data.author.name}</span>
+        
+                <p class="width-80" id="contents-${data.id}"> ${data.contents}</p>
+                <span class="text-bold inline-block"> 생성날짜:${data.createDate}</span>
+                <button type="button" id="edit-btn-${data.id}" class="btn btn-danger">
+                    <i class="ti-pencil text-dark font-size-16 pdd-horizontal-5"></i>
+                </button>
+                <button id="edit-confirm-btn-${data.id}" class="float-right pointer btn btn-icon" style="visibility:hidden">저장확인</button>
+                <button type="button" id="delete-btn-${data.id}" class="btn btn-danger">
+                    <i class="ti-trash text-dark font-size-16 pdd-horizontal-5"></i>
+                </button>
+                <input type="text" id="edit-text-${data.id}" style="visibility:hidden">
+            </div>
+        </li>
+        `
+        commentSection.insertAdjacentHTML("afterbegin", commentTemplate)
+    }
     
     const CommentEvent = function() {
         const commentService = new CommentService();
 
         const saveComment = function() {
+            console.log('in saveComment')
             const commentSaveBtn = document.getElementById('save-comment-btn')
             commentSaveBtn.addEventListener('click', commentService.save)
         }
@@ -23,11 +47,24 @@ const commentApp = (function() {
             commentSection.addEventListener('click', commentService.deleteComment)
         }
 
+        const loadComments = function() {
+            api.retrieveComments(wootubeCtx.util.getUrlParams('id'))
+                .then(response => response.json())
+                .then(data => insertComments(data))
+        }
+
+        const insertComments = function(data) {
+            for (let i = 0; i < data.length; i++) {
+                insertComment(data[i])
+            }
+        }
+
         const init = function() {
             saveComment();
             prepareEditComment();
             finalizeEditComment();
             deleteComment();
+            loadComments();
         }
 
         return {
@@ -37,39 +74,18 @@ const commentApp = (function() {
 
     const CommentService = function() {
         const save = function() {
+            
             const body = {};
             body.contents = document.getElementById('comment-input').value;
             const dataBody = JSON.stringify(body);
-            api.saveComment(dataBody, wootubeCtx.util.getUrlParams().id)
+            api.saveComment(dataBody, wootubeCtx.util.getUrlParams('id'))
                 .then(response => response.json())
                 .then(data => insertComment(data))
         }
 
-        const insertComment = function (data) {
-            const commentSection = document.getElementById('comment-section');
-            const commentTemplate = ` 
-            <li class="comment-item border bottom mrg-btm-30" id="${data.id}">
-                <img class="thumb-img img-circle" src="https://avatars3.githubusercontent.com/u/50367798?v=4" alt="">
-                <div class="info">
-                    <span href="" class="text-bold inline-block">${data.author.name}</span>
-            
-                    <p class="width-80" id="contents-${data.id}"> ${data.contents}</p>
-                    <span class="text-bold inline-block"> 생성날짜:${data.createDate}</span>
-                    <button type="button" id="edit-btn-${data.id}" class="btn btn-danger">
-                        <i class="ti-pencil text-dark font-size-16 pdd-horizontal-5"></i>
-                    </button>
-                    <button id="edit-confirm-btn-${data.id}" class="float-right pointer btn btn-icon" style="visibility:hidden">저장확인</button>
-                    <button type="button" id="delete-btn-${data.id}" class="btn btn-danger">
-                        <i class="ti-trash text-dark font-size-16 pdd-horizontal-5"></i>
-                    </button>
-                    <input type="text" id="edit-text-${data.id}" style="visibility:hidden">
-                </div>
-            </li>
-            `
-            commentSection.insertAdjacentHTML("afterbegin", commentTemplate)
-        }
-
         const prepareEdit = function(event) {
+            console.log('in prepareEdit');
+            
             const iconElement = event.target.querySelector('i');
             if(iconElement) {
                 if(iconElement.classList.contains("ti-pencil")) {
@@ -78,7 +94,7 @@ const commentApp = (function() {
                     const editConfirmBtn = document.getElementById('edit-confirm-btn-' + commentId);
                     const editText = document.getElementById('edit-text-' + commentId);
                     const contents = document.getElementById('contents-' + commentId);
-                    editText.value = contents.text();
+                    editText.value = contents.textContent;
                     editConfirmBtn.style.visibility = 'visible'
                     editText.style.visibility = 'visible'
                 }
@@ -90,9 +106,9 @@ const commentApp = (function() {
                 const liElement = event.target.closest('li');
                 const commentId = liElement.id;
                 const body = {};
-                body.contents = document.getElementById('edit-text-' + commentId).innerText;
+                body.contents = document.getElementById('edit-text-' + commentId).value;
                 const dataBody = JSON.stringify(body);
-                api.editComment(dataBody, wootubeCtx.util.getUrlParams().id, commentId)
+                api.editComment(dataBody, wootubeCtx.util.getUrlParams('id'), commentId)
                 .then(response => response.json())
                 .then(json => updateTemplate(json, commentId));
             }
@@ -113,18 +129,19 @@ const commentApp = (function() {
                 if(iconElement.classList.contains('ti-trash')) {
                     const liElement = event.target.closest('li');
                     const commentId = liElement.id;
-                    api.deleteComment(wootubeCtx.util.getUrlParams().id, commentId)
-                    .then(response => response.json())
-                    .then(json => deleteCommentFromTemplate(json, commentId))
+                    api.deleteComment(wootubeCtx.util.getUrlParams('id'), commentId)
+                    .then(response => {
+                        if (response.status !== 204) {
+                            response.json().then(res => alert(res.message))
+                        } else {
+                            deleteCommentFromTemplate(commentId)
+                        }
+                    })
                 }
             }
         }
 
-        const deleteCommentFromTemplate = function(json, commentId) {
-            if (json.result) {
-                alert(json.message);
-                return false;
-            }
+        const deleteCommentFromTemplate = function(commentId) {
             const litagToDelete = document.getElementById(''+commentId);
             litagToDelete.innerHTML = '';
         }

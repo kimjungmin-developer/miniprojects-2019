@@ -42,7 +42,8 @@ const Api = function () {
         'Content-Type': 'application/json'
     }
 
-    const baseUrl = '/api'
+    // const baseUrl = '/api'
+    const baseUrl = 'http://localhost:8080'
 
     const request = (url, method, body) => {
         return fetch(url, {
@@ -104,6 +105,10 @@ const Api = function () {
     const deleteComment = (videoId, commentId) => {
         return requestWithoutBody(`${baseUrl}/v1/videos/${videoId}/comments/${commentId}`, 'DELETE')
     }
+
+    const retrieveComments = (videoId) => {
+        return requestWithoutBody(`${baseUrl}/v1/videos/${videoId}/comments`, 'GET')
+    }
     
     const requestUser = (id) => {
         return request(`${baseUrl}/v1/users/${id}`, 'GET');
@@ -136,6 +141,7 @@ const Api = function () {
         saveComment,
         editComment,
         deleteComment,
+        retrieveComments,
         requestUser,
         updateUser,
         retrieveLoginInfo,
