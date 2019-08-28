@@ -37,7 +37,6 @@ const commentApp = (function() {
 
     const CommentService = function() {
         const save = function() {
-            console.log("inside comment.js/saveComment fucntion! hooray!")
             const body = {};
             body.contents = document.getElementById('comment-input').value;
             const dataBody = JSON.stringify(body);
@@ -71,32 +70,21 @@ const commentApp = (function() {
         }
 
         const prepareEdit = function(event) {
-            console.log("inside prepareEdit()");
-            console.log(event.target.classList);
-            console.log(event.target.closest('i'));
             const itag = event.target.querySelector('i');
-            console.log(itag)
-
             if(itag) {
                 if(itag.classList.contains("ti-pencil")) {
-                    console.log("inside prepareEdit() : inside if-statement")
                     const litag = event.target.closest('li');
                     const commentId = litag.id;
-                    console.log(litag);
-                    console.log(commentId);
                     const editConfirmBtn = document.getElementById('edit-confirm-btn-' + commentId);
                     const editText = document.getElementById('edit-text-' + commentId);
                     editConfirmBtn.setAttribute("style", "visibility:visible");
                     editText.setAttribute("style", "visibility:visible");
-                    console.log("at the end of prepareEdit()")
                 }
             }
         }
 
         const finalizeEdit = function(event) {
-            console.log("inside finalizeEdit()");
             if(event.target.classList.contains('btn-icon')) {
-                console.log('inside finalizeEdit : if-statement')
                 const litag = event.target.closest('li');
                 const commentId = litag.id;
                 const body = {};
@@ -109,24 +97,19 @@ const commentApp = (function() {
         }
 
         const updateTemplate = function(json, commentId) {
-            console.log(json)
             if (json.result) {
                 // error
                 alert(json.message);
                 return false;
             }
-            console.log(json)
             const contents = document.getElementById('contents-'+commentId);
             contents.innerText = json.contents;
         }
 
         const deleteComment = function(event) {
             const itag = event.target.querySelector('i');
-            console.log("this is i-tag: " + itag)
-            //console.log("this is i-tag-classList: " + itag.classList)
             if(itag) {
                 if(itag.classList.contains('ti-trash')) {
-                    console.log("inside deleteComment : if-statement")
                     const litag = event.target.closest('li');
                     const commentId = litag.id;
                     api.deleteComment(wootubeCtx.util.getUrlParams().id, commentId)
