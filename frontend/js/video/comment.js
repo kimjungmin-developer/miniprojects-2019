@@ -48,24 +48,24 @@ const commentApp = (function() {
         const insertComment = function (data) {
             const commentSection = document.getElementById('comment-section');
             const commentTemplate = ` 
-        <li class="comment-item border bottom mrg-btm-30" id="${data.id}">
-            <img class="thumb-img img-circle" src="https://avatars3.githubusercontent.com/u/50367798?v=4" alt="">
-            <div class="info">
-                <span href="" class="text-bold inline-block">${data.author.name}</span>
-        
-                <p class="width-80" id="contents-${data.id}"> ${data.contents}</p>
-                <span class="text-bold inline-block"> 생성날짜:${data.createDate}</span>
-                <button type="button" id="edit-btn-${data.id}" class="btn btn-danger">
-                    <i class="ti-pencil text-dark font-size-16 pdd-horizontal-5"></i>
-                </button>
-                <button id="edit-confirm-btn-${data.id}" class="float-right pointer btn btn-icon" style="visibility:hidden">저장확인</button>
-                <button type="button" id="delete-btn-${data.id}" class="btn btn-danger">
-                    <i class="ti-trash text-dark font-size-16 pdd-horizontal-5"></i>
-                </button>
-                <input type="text" id="edit-text-${data.id}" style="visibility:hidden">
-            </div>
-        </li>
-        `
+            <li class="comment-item border bottom mrg-btm-30" id="${data.id}">
+                <img class="thumb-img img-circle" src="https://avatars3.githubusercontent.com/u/50367798?v=4" alt="">
+                <div class="info">
+                    <span href="" class="text-bold inline-block">${data.author.name}</span>
+            
+                    <p class="width-80" id="contents-${data.id}"> ${data.contents}</p>
+                    <span class="text-bold inline-block"> 생성날짜:${data.createDate}</span>
+                    <button type="button" id="edit-btn-${data.id}" class="btn btn-danger">
+                        <i class="ti-pencil text-dark font-size-16 pdd-horizontal-5"></i>
+                    </button>
+                    <button id="edit-confirm-btn-${data.id}" class="float-right pointer btn btn-icon" style="visibility:hidden">저장확인</button>
+                    <button type="button" id="delete-btn-${data.id}" class="btn btn-danger">
+                        <i class="ti-trash text-dark font-size-16 pdd-horizontal-5"></i>
+                    </button>
+                    <input type="text" id="edit-text-${data.id}" style="visibility:hidden">
+                </div>
+            </li>
+            `
             commentSection.insertAdjacentHTML("afterbegin", commentTemplate)
         }
 
