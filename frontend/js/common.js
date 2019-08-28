@@ -121,6 +121,10 @@ const Api = function () {
         return requestWithoutBody(`${baseUrl}/v1/login/users`, 'GET')
     }
 
+    const requestSubscribed = (userId) => {
+        return requestWithoutBody(`${baseUrl}/v1/users/${userId}/subscribed`, 'GET')
+    }
+
     return {
         requestVideos,
         requestVideo,
@@ -136,7 +140,8 @@ const Api = function () {
         updateUser,
         retrieveLoginInfo,
         deleteUser,
-        requestMyChannelVideos
+        requestMyChannelVideos,
+        requestSubscribed
     }
 }
 
