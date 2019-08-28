@@ -35,5 +35,3 @@ backend/out/
 ### Application output ###
 /db_data/
 /nginx/
-
-backend/src/main/resources/aws.yml

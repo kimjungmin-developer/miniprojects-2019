@@ -41,10 +41,9 @@ const commentApp = (function() {
             const body = {};
             body.contents = document.getElementById('comment-input').value;
             const dataBody = JSON.stringify(body);
-            // api.saveComment(dataBody, wootubeCtx.util.getUrlParams().id)
-            //     .then(response => response.json())
-            //     .then(data => insertComment(data))
-            insertComment(testData);
+            api.saveComment(dataBody, wootubeCtx.util.getUrlParams().id)
+                .then(response => response.json())
+                .then(data => insertComment(data))
         }
 
         const insertComment = function (data) {
@@ -103,10 +102,9 @@ const commentApp = (function() {
                 const body = {};
                 body.contents = document.getElementById('edit-text-' + commentId).innerText;
                 const dataBody = JSON.stringify(body);
-                // api.editComment(dataBody, wootubeCtx.util.getUrlParams().id, commentId)
-                // .then(response => response.json())
-                // .then(json => updateTemplate(json, commentId));
-                updateTemplate(testData2,1)
+                api.editComment(dataBody, wootubeCtx.util.getUrlParams().id, commentId)
+                .then(response => response.json())
+                .then(json => updateTemplate(json, commentId));
             }
         }
 
@@ -131,10 +129,9 @@ const commentApp = (function() {
                     console.log("inside deleteComment : if-statement")
                     const litag = event.target.closest('li');
                     const commentId = litag.id;
-                    // api.deleteComment(wootubeCtx.util.getUrlParams().id, commentId)
-                    // .then(response => response.json())
-                    // .then(json => deleteCommentFromTemplate(json, commentId))
-                    deleteCommentFromTemplate(testData2, 1);
+                    api.deleteComment(wootubeCtx.util.getUrlParams().id, commentId)
+                    .then(response => response.json())
+                    .then(json => deleteCommentFromTemplate(json, commentId))
                 }
             }
         }
