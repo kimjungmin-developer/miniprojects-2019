@@ -70,23 +70,25 @@ const commentApp = (function() {
         }
 
         const prepareEdit = function(event) {
-            const itag = event.target.querySelector('i');
-            if(itag) {
-                if(itag.classList.contains("ti-pencil")) {
-                    const litag = event.target.closest('li');
-                    const commentId = litag.id;
+            const iconElement = event.target.querySelector('i');
+            if(iconElement) {
+                if(iconElement.classList.contains("ti-pencil")) {
+                    const liElement = event.target.closest('li');
+                    const commentId = liElement.id;
                     const editConfirmBtn = document.getElementById('edit-confirm-btn-' + commentId);
                     const editText = document.getElementById('edit-text-' + commentId);
-                    editConfirmBtn.setAttribute("style", "visibility:visible");
-                    editText.setAttribute("style", "visibility:visible");
+                    const contents = document.getElementById('contents-' + commentId);
+                    editText.value = contents.text();
+                    editConfirmBtn.style.visibility = 'visible'
+                    editText.style.visibility = 'visible'
                 }
             }
         }
 
         const finalizeEdit = function(event) {
             if(event.target.classList.contains('btn-icon')) {
-                const litag = event.target.closest('li');
-                const commentId = litag.id;
+                const liElement = event.target.closest('li');
+                const commentId = liElement.id;
                 const body = {};
                 body.contents = document.getElementById('edit-text-' + commentId).innerText;
                 const dataBody = JSON.stringify(body);
@@ -98,7 +100,6 @@ const commentApp = (function() {
 
         const updateTemplate = function(json, commentId) {
             if (json.result) {
-                // error
                 alert(json.message);
                 return false;
             }
@@ -107,11 +108,11 @@ const commentApp = (function() {
         }
 
         const deleteComment = function(event) {
-            const itag = event.target.querySelector('i');
-            if(itag) {
-                if(itag.classList.contains('ti-trash')) {
-                    const litag = event.target.closest('li');
-                    const commentId = litag.id;
+            const iconElement = event.target.querySelector('i');
+            if(iconElement) {
+                if(iconElement.classList.contains('ti-trash')) {
+                    const liElement = event.target.closest('li');
+                    const commentId = liElement.id;
                     api.deleteComment(wootubeCtx.util.getUrlParams().id, commentId)
                     .then(response => response.json())
                     .then(json => deleteCommentFromTemplate(json, commentId))
@@ -121,7 +122,6 @@ const commentApp = (function() {
 
         const deleteCommentFromTemplate = function(json, commentId) {
             if (json.result) {
-                // error
                 alert(json.message);
                 return false;
             }
@@ -130,10 +130,10 @@ const commentApp = (function() {
         }
 
         return {
-            save:save,
-            prepareEdit:prepareEdit,
-            finalizeEdit:finalizeEdit,
-            deleteComment:deleteComment
+            save: save,
+            prepareEdit: prepareEdit,
+            finalizeEdit: finalizeEdit,
+            deleteComment: deleteComment
         }
     }
 
@@ -143,7 +143,7 @@ const commentApp = (function() {
     }
 
     return {
-        init:init
+        init: init
     }
 })();
 
