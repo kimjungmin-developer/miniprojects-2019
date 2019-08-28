@@ -26,6 +26,20 @@ const data = [
     }
 ]
 
+const testData = {
+    id: '1',
+    author: {
+        id: '1',
+        name: 'jm'
+    },
+    contents: 'this is contnets',
+    createDate: '20190827'
+}
+
+const testData2 = {
+    contents: '변경된 내용'
+}
+
 
 
 

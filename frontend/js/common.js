@@ -38,7 +38,8 @@ const Api = function () {
         'Content-Type': 'application/json'
     }
 
-    const baseUrl = '/api'
+    //const baseUrl = '/api'
+    const baseUrl = 'http://localhost:8080'
 
     const request = (url, method, body) => {
         return fetch(url, {
@@ -85,6 +86,19 @@ const Api = function () {
         return request(`${baseUrl}/v1/users`, 'POST', dataBody)
     }
 
+    //여기 부터 jm의 comment code
+    const saveComment = (dataBody, videoId) => {
+        return request(`${baseUrl}/v1/videos/${videoId}/comments`, 'POST', dataBody)
+    }
+
+    const editComment = (dataBody, videoId, commentId) => {
+        return request(`${baseUrl}/v1/videos/${videoId}/comments/${commentId}`, 'PUT', dataBody)
+    }
+
+    const deleteComment = (videoId, commentId) => {
+        return requestWithoutBody(`${baseUrl}/v1/videos/${videoId}/comments/${commentId}`, 'DELETE')
+    }
+
     return {
         requestVideos,
         requestVideo,
@@ -92,7 +106,10 @@ const Api = function () {
         updateVideo,
         deleteVideo,
         postLogin,
-        signup
+        signup,
+        saveComment,
+        editComment,
+        deleteComment
     }
 
 }
