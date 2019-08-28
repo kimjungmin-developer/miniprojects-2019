@@ -2,6 +2,7 @@ package com.woowacourse.edd.presentation.controller;
 
 import com.woowacourse.edd.application.dto.LoginRequestDto;
 import com.woowacourse.edd.application.dto.UserSaveRequestDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.StatusAssertions;
 
@@ -44,26 +45,35 @@ public class SubscriptionControllerTests extends BasicControllerTests {
         signUp(subscriber1);
         signUp(subscriber2);
 
-        String url=signUp(subscribed).getResponseHeaders().getLocation().toASCIIString();
+        String url = signUp(subscribed).getResponseHeaders().getLocation().toASCIIString();
 
-        LoginRequestDto loginRequestDto=new LoginRequestDto("conas@gmail.com","p@ssW0rd");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("conas@gmail.com", "p@ssW0rd");
         String sid = getLoginCookie(loginRequestDto);
 
         webTestClient.post().uri(url + "/subscribe")
-            .cookie(COOKIE_JSESSIONID,sid)
+            .cookie(COOKIE_JSESSIONID, sid)
             .exchange();
 
-        loginRequestDto=new LoginRequestDto("heebong@gmail.com","p@ssW0rd");
+        loginRequestDto = new LoginRequestDto("heebong@gmail.com", "p@ssW0rd");
         sid = getLoginCookie(loginRequestDto);
 
         webTestClient.post().uri(url + "/subscribe")
-            .cookie(COOKIE_JSESSIONID,sid)
+            .cookie(COOKIE_JSESSIONID, sid)
             .exchange();
 
-        webTestClient.get().uri(url +"/count-subscribers")
+        webTestClient.get().uri(url + "/count-subscribers")
             .exchange()
             .expectStatus().isOk()
             .expectBody()
-            .jsonPath("$.numOfSubscribers").isEqualTo(2);
+            .jsonPath("$.count").isEqualTo(2);
+    }
+
+    @DisplayName("구독자가 존재하지 않는데, 구독 신청을 하는 경우")
+    @Test
+    void find_subscribers_without_subscribed() {
+        String url = "/v1/users/"+Integer.MAX_VALUE + "count-subscribers";
+            webTestClient.get().uri(url)
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 }
