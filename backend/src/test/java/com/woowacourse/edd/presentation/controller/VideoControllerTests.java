@@ -67,12 +67,12 @@ public class VideoControllerTests extends BasicControllerTests {
 
     @Test
     void find_videos_by_creator() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("edan", "edan@gmail.com","p@ssW0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("edan", "edan1000@gmail.com","p@ssW0rd");
         String url = signUp(userSaveRequestDto).getResponseHeaders()
             .getLocation()
             .toASCIIString();
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto("edan@gmail.com", "p@ssW0rd");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("edan1000@gmail.com", "p@ssW0rd");
         VideoSaveRequestDto videoSaveRequestDto = new VideoSaveRequestDto("abc","newtitle","newContents");
         VideoSaveRequestDto secondVideoSaveRequestDto = new VideoSaveRequestDto("def", "secondtitle", "secondcontents");
 
