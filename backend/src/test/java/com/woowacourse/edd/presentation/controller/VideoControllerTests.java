@@ -59,7 +59,7 @@ public class VideoControllerTests extends BasicControllerTests {
         IntStream.range(0, response.getContent().size() - 1)
             .forEach(i -> {
                 assertThat(LocalDateTime.parse((String) response.getContent().get(i).get("createDate")))
-                    .isAfter(LocalDateTime.parse((String) response.getContent().get(i + 1).get("createDate")));
+                    .isAfterOrEqualTo(LocalDateTime.parse((String) response.getContent().get(i + 1).get("createDate")));
             });
     }
 
