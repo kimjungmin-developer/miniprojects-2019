@@ -27,7 +27,6 @@ const commentApp = (function() {
         const commentService = new CommentService();
 
         const saveComment = function() {
-            console.log('in saveComment')
             const commentSaveBtn = document.getElementById('save-comment-btn')
             commentSaveBtn.addEventListener('click', commentService.save)
         }
@@ -83,9 +82,7 @@ const commentApp = (function() {
                 .then(data => insertComment(data))
         }
 
-        const prepareEdit = function(event) {
-            console.log('in prepareEdit');
-            
+        const prepareEdit = function(event) {            
             const iconElement = event.target.querySelector('i');
             if(iconElement) {
                 if(iconElement.classList.contains("ti-pencil")) {
@@ -100,7 +97,7 @@ const commentApp = (function() {
                 }
             }
         }
-
+        
         const finalizeEdit = function(event) {
             if(event.target.classList.contains('btn-icon')) {
                 const liElement = event.target.closest('li');
