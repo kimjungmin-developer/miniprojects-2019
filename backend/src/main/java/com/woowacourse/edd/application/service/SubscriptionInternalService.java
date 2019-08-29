@@ -2,7 +2,8 @@ package com.woowacourse.edd.application.service;
 
 import com.woowacourse.edd.domain.Subscription;
 import com.woowacourse.edd.domain.User;
-import com.woowacourse.edd.exceptions.InvalidSubscriptionException;
+import com.woowacourse.edd.exceptions.DuplicateSubscriptionException;
+import com.woowacourse.edd.exceptions.SelfSubscriptionException;
 import com.woowacourse.edd.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,14 +22,28 @@ public class SubscriptionInternalService {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public Subscription save(Long subscribedId, Long id) {
-        if (subscribedId == id) {
-            throw new InvalidSubscriptionException();
-        }
+    public Subscription save(Long subscribedId, Long userId) {
+        checkSelfSubscription(subscribedId, userId);
+
         User subscribed = userInternalService.findById(subscribedId);
-        User subscriber = userInternalService.findById(id);
+        User subscriber = userInternalService.findById(userId);
+
+        checkDuplicateSubscription(subscribed, subscriber);
+
         Subscription subscription = new Subscription(subscriber, subscribed);
         return subscriptionRepository.save(subscription);
+    }
+
+    private void checkDuplicateSubscription(User subscribed, User subscriber) {
+        if (subscriptionRepository.existsBySubscribedAndSubscriber(subscribed, subscriber)) {
+            throw new DuplicateSubscriptionException();
+        }
+    }
+
+    private void checkSelfSubscription(Long subscribedId, Long userId) {
+        if (subscribedId == userId) {
+            throw new SelfSubscriptionException();
+        }
     }
 
     public int countSubscribers(Long subscribedId) {
@@ -36,19 +51,17 @@ public class SubscriptionInternalService {
         return subscriptionRepository.findAllBySubscribed(subscribed).size();
     }
 
-    public List<Subscription> findSubscriptions(Long id) {
-        User user = userInternalService.findById(id);
+    public List<Subscription> findSubscriptions(Long userId) {
+        User user = userInternalService.findById(userId);
         return subscriptionRepository.findAllBySubscriber(user);
     }
 
     public void cancelSubscription(Long subscribedId, Long userId) {
-        if (userId == subscribedId) {
-            throw new InvalidSubscriptionException();
-        }
+        checkSelfSubscription(userId, subscribedId);
 
         User user = userInternalService.findById(userId);
         User subscribed = userInternalService.findById(subscribedId);
 
-        subscriptionRepository.deleteAllBySubscribedAndSubscriber(subscribed, user);
+        subscriptionRepository.deleteBySubscribedAndSubscriber(subscribed, user);
     }
 }

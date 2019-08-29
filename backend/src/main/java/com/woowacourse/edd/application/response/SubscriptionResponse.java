@@ -1,6 +1,7 @@
 package com.woowacourse.edd.application.response;
 
 public class SubscriptionResponse {
+
     private final Long id;
     private final String name;
 

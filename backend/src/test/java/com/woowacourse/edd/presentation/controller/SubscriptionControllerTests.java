@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static com.woowacourse.edd.exceptions.DuplicateSubscriptionException.DUPLICATE_SUBSCRIPTION_MESSAGE;
 import static com.woowacourse.edd.exceptions.UnauthenticatedException.UNAUTHENTICATED_MESSAGE;
 import static com.woowacourse.edd.exceptions.UserNotFoundException.USER_NOT_FOUND_MESSAGE;
 import static com.woowacourse.edd.presentation.controller.UserController.USER_URL;
@@ -26,6 +27,23 @@ public class SubscriptionControllerTests extends BasicControllerTests {
             .cookie(COOKIE_JSESSIONID, sid)
             .exchange()
             .expectStatus().isCreated();
+    }
+
+    @Test
+    @DisplayName("동일한 구독 요청 여러번")
+    void double_subscription() {
+        UserSaveRequestDto subscriber = new UserSaveRequestDto("conas", "babo@gmail.com", "p@ssW0rd");
+        UserSaveRequestDto subscribed = new UserSaveRequestDto("jm", "chunjae@gmail.com", "p@ssW0rd");
+        String url = signUp(subscribed).getResponseHeaders().getLocation().toASCIIString();
+        signUp(subscriber);
+
+        LoginRequestDto loginRequestDto = new LoginRequestDto("babo@gmail.com", "p@ssW0rd");
+        String sid = getLoginCookie(loginRequestDto);
+
+        subscribe(url, sid)
+            .expectStatus().isCreated();
+
+        assertFailBadRequest(subscribe(url, sid), DUPLICATE_SUBSCRIPTION_MESSAGE);
     }
 
     @Test
@@ -128,8 +146,8 @@ public class SubscriptionControllerTests extends BasicControllerTests {
             .jsonPath("$[0].name").isEqualTo("heebong");
     }
 
-    private void subscribe(String url, String sid) {
-        executePost(url + "/subscribe")
+    private WebTestClient.ResponseSpec subscribe(String url, String sid) {
+        return executePost(url + "/subscribe")
             .cookie(COOKIE_JSESSIONID, sid)
             .exchange();
     }

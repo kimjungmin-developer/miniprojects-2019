@@ -2,7 +2,7 @@ package com.woowacourse.edd.application.service;
 
 import com.woowacourse.edd.domain.Subscription;
 import com.woowacourse.edd.domain.User;
-import com.woowacourse.edd.exceptions.InvalidSubscriptionException;
+import com.woowacourse.edd.exceptions.SelfSubscriptionException;
 import com.woowacourse.edd.repository.SubscriptionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +54,6 @@ public class SubscriptionInternalServiceTests {
 
     @Test
     void save_fail_same_id() {
-        assertThrows(InvalidSubscriptionException.class, () -> subscriptionInternalService.save(3L, 3L));
+        assertThrows(SelfSubscriptionException.class, () -> subscriptionInternalService.save(3L, 3L));
     }
 }
