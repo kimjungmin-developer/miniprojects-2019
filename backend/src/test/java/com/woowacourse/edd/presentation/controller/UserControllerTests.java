@@ -11,32 +11,40 @@ import reactor.core.publisher.Mono;
 
 import static com.woowacourse.edd.application.dto.UserSaveRequestDto.INVALID_EMAIL_MESSAGE;
 import static com.woowacourse.edd.application.dto.UserSaveRequestDto.INVALID_NAME_MESSAGE;
+import static com.woowacourse.edd.application.dto.UserSaveRequestDto.INVALID_PASSWORD_CONFIRM_MESSAGE;
 import static com.woowacourse.edd.application.dto.UserSaveRequestDto.INVALID_PASSWORD_MESSAGE;
+import static com.woowacourse.edd.exceptions.DuplicateEmailSignUpException.DUPLICATE_EMAIL_SIGNUP_MESSAGE;
 import static com.woowacourse.edd.presentation.controller.UserController.USER_URL;
 
 public class UserControllerTests extends BasicControllerTests {
 
     @Test
     void email_validation() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "asdadasdasd", "P@ssW0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "asdadasdasd", "P@ssW0rd", "P@ssW0rd");
         assertFailBadRequest(assertRequestValidation(userSaveRequestDto), INVALID_EMAIL_MESSAGE);
     }
 
     @Test
     void name_validation() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("r", "als5610@naver.com", "P@ssW0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("r", "als5610@naver.com", "P@ssW0rd", "P@ssW0rd");
         assertFailBadRequest(assertRequestValidation(userSaveRequestDto), INVALID_NAME_MESSAGE);
     }
 
     @Test
     void password_validation() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "als5610@naver.com", "Passw0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "als5610@naver.com", "Passw0rd", "Passw0rd");
         assertFailBadRequest(assertRequestValidation(userSaveRequestDto), INVALID_PASSWORD_MESSAGE);
     }
 
     @Test
+    void password_confirmation() {
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "towa4237@example.com", "p@ssW0rd", "P@ssW0rd");
+        assertFailBadRequest(assertRequestValidation(userSaveRequestDto), INVALID_PASSWORD_CONFIRM_MESSAGE);
+    }
+
+    @Test
     void user_save() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "shit@email.com", "P@ssW0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "shit@email.com", "P@ssW0rd", "P@ssW0rd");
 
         findUser(getUrl(signUp(userSaveRequestDto)))
             .expectStatus().isOk()
@@ -47,7 +55,7 @@ public class UserControllerTests extends BasicControllerTests {
 
     @Test
     void user_update() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "shit123@email.com", "P@ssW0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "shit123@email.com", "P@ssW0rd", "P@ssW0rd");
         LoginRequestDto loginRequestDto = new LoginRequestDto("shit123@email.com", "P@ssW0rd");
 
         String url = getUrl(signUp(userSaveRequestDto));
@@ -62,10 +70,32 @@ public class UserControllerTests extends BasicControllerTests {
     }
 
     @Test
+    @DisplayName("이미 존재하는 이메일로 가입을 시도할 때")
+    void duplicate_email_signup() {
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto(DEFAULT_LOGIN_NAME, DEFAULT_LOGIN_EMAIL, DEFAULT_LOGIN_PASSWORD, DEFAULT_LOGIN_PASSWORD);
+        WebTestClient.ResponseSpec responseSpec = executePost(USER_URL)
+            .body(Mono.just(userSaveRequestDto), UserSaveRequestDto.class)
+            .exchange();
+
+        assertFailBadRequest(responseSpec, DUPLICATE_EMAIL_SIGNUP_MESSAGE);
+    }
+
+    @Test
+    @DisplayName("공백으로 이메일가입을 시도할 때")
+    void blank_email_signup() {
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto(DEFAULT_LOGIN_NAME, " ", DEFAULT_LOGIN_PASSWORD, DEFAULT_LOGIN_PASSWORD);
+        WebTestClient.ResponseSpec responseSpec = executePost(USER_URL)
+            .body(Mono.just(userSaveRequestDto), UserSaveRequestDto.class)
+            .exchange();
+
+        assertFailBadRequest(responseSpec, INVALID_EMAIL_MESSAGE);
+    }
+
+    @Test
     @DisplayName("가입된 유저가 다른 유저의 수정을 시도할 때")
     void unauthorized_user_update() {
-        UserSaveRequestDto authorizedUser = new UserSaveRequestDto("Jmm", "jm@naver.com", "p@ssW0rd");
-        UserSaveRequestDto unauthorizedUser = new UserSaveRequestDto("conas", "conas@naver.com", "p@ssW0rd");
+        UserSaveRequestDto authorizedUser = new UserSaveRequestDto("Jmm", "jm@naver.com", "p@ssW0rd", "p@ssW0rd");
+        UserSaveRequestDto unauthorizedUser = new UserSaveRequestDto("conas", "conas@naver.com", "p@ssW0rd", "p@ssW0rd");
         UserUpdateRequestDto unauthorizedUpdateRequest = new UserUpdateRequestDto("pobi", "conas@naver.com");
 
         String url = getUrl(signUp(authorizedUser));
@@ -94,7 +124,7 @@ public class UserControllerTests extends BasicControllerTests {
     @Test
     @DisplayName("가입된 유저가 자신의 유저 삭제를 시도할 때")
     void authorized_user_delete_no_content() {
-        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "shit222@email.com", "P@ssW0rd");
+        UserSaveRequestDto userSaveRequestDto = new UserSaveRequestDto("robby", "shit222@email.com", "P@ssW0rd", "P@ssW0rd");
         LoginRequestDto loginRequestDto = new LoginRequestDto("shit222@email.com", "P@ssW0rd");
         String url = getUrl(signUp(userSaveRequestDto));
         String sid = getLoginCookie(loginRequestDto);
@@ -105,8 +135,8 @@ public class UserControllerTests extends BasicControllerTests {
     @Test
     @DisplayName("가입된 유저가 다른 유저의 삭제를 시도할 때")
     void unauthorized_user_delete() {
-        UserSaveRequestDto authorizedUserDto = new UserSaveRequestDto("normal", "normalUser@gmail.com", "p@ssW0rd");
-        UserSaveRequestDto unauthorizedUserDto = new UserSaveRequestDto("conas", "conas@gmail.com", "p@ssW0rd");
+        UserSaveRequestDto authorizedUserDto = new UserSaveRequestDto("normal", "normalUser@gmail.com", "p@ssW0rd", "p@ssW0rd");
+        UserSaveRequestDto unauthorizedUserDto = new UserSaveRequestDto("conas", "conas@gmail.com", "p@ssW0rd", "p@ssW0rd");
         LoginRequestDto loginRequestDto = new LoginRequestDto("conas@gmail.com", "p@ssW0rd");
         String authorizedUserUrl = getUrl(signUp(authorizedUserDto));
         signUp(unauthorizedUserDto);
@@ -114,11 +144,6 @@ public class UserControllerTests extends BasicControllerTests {
         String sid = getLoginCookie(loginRequestDto);
         deleteUser(authorizedUserUrl, sid)
             .expectStatus().isForbidden();
-    }
-
-    @Test
-    @DisplayName("가입된 유저가 탈퇴한 유저의 정보를 조회할 때")
-    void user_() {
     }
 
     @Test
