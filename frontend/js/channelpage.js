@@ -12,10 +12,6 @@ const loadVideoCards = function (userId) {
 const userId = wootubeCtx.util.getUrlParams('id')
 loadVideoCards(userId)
 
-
-
-// registerSubscribeBtns()
-
 document.querySelector('#btn-update').addEventListener('click', () => {
     channelCtx.flags.isInUpdate = changeUpdateState(channelCtx.flags.isInUpdate)
 })
