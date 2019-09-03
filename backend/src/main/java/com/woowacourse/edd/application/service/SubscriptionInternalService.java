@@ -7,7 +7,6 @@ import com.woowacourse.edd.exceptions.SelfSubscriptionException;
 import com.woowacourse.edd.exceptions.UserNotFoundException;
 import com.woowacourse.edd.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
